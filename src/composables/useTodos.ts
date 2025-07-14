@@ -1,4 +1,5 @@
 import useLocalStorage from './useLocalStorage'
+import { computed, ref } from 'vue'
 
 export interface Todo {
   id: string
@@ -6,8 +7,31 @@ export interface Todo {
   completed: boolean
 }
 
+type TodoFilter = 'all' | 'completed' | 'incompleted'
+
 export default function useTodos() {
   const todos = useLocalStorage<Todo[]>('todos', [])
+  const filter = ref<TodoFilter>('all')
+  const filters: Record<TodoFilter, (list: Todo[]) => Todo[]> = {
+    all: (list) => list,
+    completed: (list) => list.filter((t) => !t.completed),
+    incompleted: (list) => list.filter((t) => t.completed),
+  }
+  const currentTodos = computed(() => filters[filter.value](todos.value))
+  const counts = computed(() => ({
+    all: todos.value.length,
+    completed: filters.completed(todos.value).length,
+    incompleted: filters.incompleted(todos.value).length,
+    current: currentTodos.value.length,
+  }))
+
+  function setFilter(f: TodoFilter) {
+    filter.value = f
+  }
+
+  function clearAll() {
+    todos.value = []
+  }
 
   function addTodo(title: string) {
     todos.value.push({
@@ -31,7 +55,11 @@ export default function useTodos() {
   }
 
   return {
-    todos,
+    all: todos,
+    setFilter,
+    current: currentTodos,
+    counts,
+    clearAll,
     addTodo,
     toggleTodo,
     deleteTodo,
