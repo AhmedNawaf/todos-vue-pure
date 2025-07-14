@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import type { Todo } from '../composables/useTodos'
+import type { Todo } from '../../composables/useTodos'
 const props = defineProps<{
   todo: Todo
 }>()
