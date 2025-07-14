@@ -1,7 +1,7 @@
 import useLocalStorage from './useLocalStorage'
 
 export interface Todo {
-  id: number
+  id: string
   title: string
   completed: boolean
 }
@@ -9,39 +9,31 @@ export interface Todo {
 export default function useTodos() {
   const todos = useLocalStorage<Todo[]>('todos', [])
 
-  function addTodo(value: string) {
+  function addTodo(title: string) {
     todos.value.push({
-      id: todos.value.length + 1,
-      title: value,
+      id: Date.now().toString(),
+      title,
       completed: false,
     })
   }
 
-  function markTodo(id: number) {
-    todos.value.map((todo) => {
-      if (todo.id === id) {
-        todo.completed = !todo.completed
-      }
-    })
+  function toggleTodo(id: string) {
+    const t = todos.value.find((todo) => todo.id === id)
+    if (t) t.completed = !t.completed
   }
 
-  function deleteTodo(id: number) {
+  function deleteTodo(id: string) {
     todos.value = todos.value.filter((todo) => todo.id !== id)
   }
 
-  function editTodo(id: number, value: string) {
-    console.log(id, value)
-    todos.value = todos.value.map((todo) => {
-      if (todo.id === id) {
-        todo.title = value
-      }
-      return todo
-    })
+  function editTodo(id: string, title: string) {
+    todos.value = todos.value.map((todo) => (todo.id === id ? { ...todo, title } : todo))
   }
+
   return {
     todos,
     addTodo,
-    markTodo,
+    toggleTodo,
     deleteTodo,
     editTodo,
   }
