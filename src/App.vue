@@ -3,7 +3,7 @@ import TodoForm from './components/TodoForm.vue'
 import TodoCard from './components/TodoCard.vue'
 import useTodos from './composables/useTodos'
 
-const { todos, addTodo, markTodo, deleteTodo, editTodo } = useTodos()
+const { todos, addTodo, toggleTodo, deleteTodo, editTodo } = useTodos()
 </script>
 
 <template>
@@ -27,7 +27,7 @@ const { todos, addTodo, markTodo, deleteTodo, editTodo } = useTodos()
       v-for="todo in todos"
       :key="todo.id"
       :todo="todo"
-      @mark-todo="markTodo"
+      @toggle-todo="toggleTodo"
       @edit-todo="editTodo"
       @delete-todo="deleteTodo"
     />

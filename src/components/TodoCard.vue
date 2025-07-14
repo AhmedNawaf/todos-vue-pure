@@ -4,7 +4,7 @@ import type { Todo } from '../composables/useTodos'
 const props = defineProps<{
   todo: Todo
 }>()
-const emit = defineEmits(['markTodo', 'editTodo', 'deleteTodo'])
+const emit = defineEmits(['toggleTodo', 'editTodo', 'deleteTodo'])
 const isEditing = ref(false)
 const editTitle = ref(props.todo.title)
 
@@ -23,7 +23,7 @@ function editTodo() {
       <div class="flex items-center gap-2 flex-1">
         <template v-if="!isEditing">
           <input
-            @click="$emit('markTodo', todo.id)"
+            @click="$emit('toggleTodo', todo.id)"
             type="checkbox"
             :checked="todo.completed"
             class="w-6 h-6 border border-gray-300 text-blue-500 cursor-pointer"
