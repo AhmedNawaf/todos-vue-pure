@@ -3,8 +3,21 @@ import TodoForm from './components/TodoForm.vue'
 import TodoCard from './components/TodoCard.vue'
 import useTodos from './composables/useTodos'
 
-const { all, counts, current, setFilter, clearAll, addTodo, toggleTodo, deleteTodo, editTodo } =
-  useTodos()
+const {
+  all,
+  counts,
+  current,
+  paginatedItems,
+  totalPages,
+  setPage,
+  page,
+  setFilter,
+  clearAll,
+  addTodo,
+  toggleTodo,
+  deleteTodo,
+  editTodo,
+} = useTodos()
 </script>
 
 <template>
@@ -12,6 +25,9 @@ const { all, counts, current, setFilter, clearAll, addTodo, toggleTodo, deleteTo
   <h2 class="text-sm font-light italic text-center mt-2">
     This is a simple todo app built with Vue 3.<br />
     It uses local storage to store the todos.
+  </h2>
+  <h2 class="text-sm font-medium italic text-center mt-2" v-if="current.length">
+    Total Pages : {{ totalPages }}
   </h2>
   <div class="flex flex-col gap-4 mt-10">
     <TodoForm @add-todo="addTodo" />
@@ -46,12 +62,26 @@ const { all, counts, current, setFilter, clearAll, addTodo, toggleTodo, deleteTo
       </button>
     </div>
     <TodoCard
-      v-for="todo in current"
+      v-for="todo in paginatedItems"
       :key="todo.id"
       :todo="todo"
       @toggle-todo="toggleTodo"
       @edit-todo="editTodo"
       @delete-todo="deleteTodo"
     />
+    <div class="flex justify-center space-x-6" v-if="totalPages > 1">
+      <button
+        class="border bg-blue-500 text-white px-4 py-2 cursor-pointer font-semibold uppercase rounded-lg"
+        @click="setPage(page - 1)"
+      >
+        Previous
+      </button>
+      <button
+        class="border bg-blue-500 text-white px-4 py-2 cursor-pointer font-semibold uppercase rounded-lg"
+        @click="setPage(page + 1)"
+      >
+        Next
+      </button>
+    </div>
   </div>
 </template>

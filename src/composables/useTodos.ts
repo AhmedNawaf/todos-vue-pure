@@ -1,22 +1,23 @@
 import useLocalStorage from './useLocalStorage'
 import { computed, ref } from 'vue'
+import { usePagination } from './usePagination'
 
 export interface Todo {
   id: string
   title: string
   completed: boolean
 }
-
+const filters: Record<TodoFilter, (list: Todo[]) => Todo[]> = {
+  all: (list) => list,
+  completed: (list) => list.filter((t) => !t.completed),
+  incompleted: (list) => list.filter((t) => t.completed),
+}
 type TodoFilter = 'all' | 'completed' | 'incompleted'
 
 export default function useTodos() {
   const todos = useLocalStorage<Todo[]>('todos', [])
   const filter = ref<TodoFilter>('all')
-  const filters: Record<TodoFilter, (list: Todo[]) => Todo[]> = {
-    all: (list) => list,
-    completed: (list) => list.filter((t) => !t.completed),
-    incompleted: (list) => list.filter((t) => t.completed),
-  }
+
   const currentTodos = computed(() => filters[filter.value](todos.value))
   const counts = computed(() => ({
     all: todos.value.length,
@@ -26,6 +27,7 @@ export default function useTodos() {
   }))
 
   function setFilter(f: TodoFilter) {
+    setPage(1)
     filter.value = f
   }
 
@@ -54,10 +56,27 @@ export default function useTodos() {
     todos.value = todos.value.map((todo) => (todo.id === id ? { ...todo, title } : todo))
   }
 
+  const {
+    page,
+    pageSize,
+    totalItems,
+    totalPages,
+    paginatedItems, // <-- here’s your “current page” slice
+    setPage,
+    setPageSize,
+  } = usePagination(currentTodos, /* initialPageSize= */ 5)
+
   return {
     all: todos,
     setFilter,
     current: currentTodos,
+    page,
+    pageSize,
+    totalItems,
+    totalPages,
+    paginatedItems,
+    setPage,
+    setPageSize,
     counts,
     clearAll,
     addTodo,
