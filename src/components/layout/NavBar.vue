@@ -1,8 +1,12 @@
 <script setup lang="ts">
+import useAuth from '@/composables/useAuth'
+
 const links = [
   { name: 'Todos', to: '/' },
   { name: 'About', to: '/about' },
 ]
+
+const { isAuthenticated, logout } = useAuth()
 </script>
 
 <template>
@@ -29,18 +33,28 @@ const links = [
         <div
           class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 space-x-4"
         >
-          <RouterLink
-            to="/register"
-            class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white"
-          >
-            Register
-          </RouterLink>
-          <RouterLink
-            to="/login"
-            class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white"
-          >
-            Login
-          </RouterLink>
+          <template v-if="!isAuthenticated">
+            <RouterLink
+              to="/register"
+              class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white"
+            >
+              Register
+            </RouterLink>
+            <RouterLink
+              to="/login"
+              class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white"
+            >
+              Login
+            </RouterLink>
+          </template>
+          <template v-else>
+            <button
+              @click="logout"
+              class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white cursor-pointer"
+            >
+              Logout
+            </button>
+          </template>
         </div>
       </div>
     </div>

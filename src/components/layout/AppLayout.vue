@@ -4,7 +4,7 @@ import NavBar from './NavBar.vue'
 
 <template>
   <NavBar />
-  <main class="max-w-lg mx-auto h-screen">
+  <main class="max-w-lg mx-auto h-screen mt-20">
     <slot />
   </main>
   <footer class="bg-gray-800 p-4 text-center">
